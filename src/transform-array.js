@@ -13,9 +13,36 @@ const { NotImplementedError } = require('../extensions/index.js');
  * transform([1, 2, 3, '--discard-prev', 4, 5]) => [1, 2, 4, 5]
  * 
  */
-function transform(/* arr */) {
-  throw new NotImplementedError('Not implemented');
-  // remove line with error and write your code here
+function transform(arr) {
+  if (!Array.isArray(arr)) throw new Error("'arr' parameter must be an instance of the Array!");
+  let splitedArr = arr.slice();
+  let targetTransform = [];
+  for (let i = 0; i < splitedArr.length; i++) {
+    if (splitedArr[i] === '--discard-next') {
+      if (i + 1 >= splitedArr.length) break;
+      splitedArr[i + 1] = "s0_disc";
+    } else if (splitedArr[i] === '--discard-prev') {
+      if (i - 1 < 0) continue;
+      targetTransform[i - 1] = "s0_disc";
+    } else if (splitedArr[i] === '--double-next') {
+      if (i + 1 > splitedArr.length) break;
+      targetTransform[i] = splitedArr[i + 1];
+    } else if (splitedArr[i] === '--double-prev') {
+      if (i - 1 < 0) continue;
+      targetTransform[i] = targetTransform[i - 1];
+    } else {
+      targetTransform.push(splitedArr[i])
+    }
+  };
+
+  splitedArr = targetTransform.slice();
+  targetTransform = [];
+
+  splitedArr.forEach(item => {
+    if (item != 's0_disc' && item != undefined) targetTransform.push(item);
+  });
+
+  return targetTransform;
 }
 
 module.exports = {
